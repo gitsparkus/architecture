@@ -1,6 +1,11 @@
 from typing import List
 from abc import ABC, abstractmethod
 
+"""
+1. На основе Диаграмы классов ModelElements, разработать классы: Model Store, 
+PoligonalModel (Texture, Poligon), Flash, Camera, Scene
+"""
+
 
 class Point3D:
     ...
@@ -101,4 +106,4 @@ class ModelStore:
         return next(filter(lambda x: x.scene_id == scene_id, self.scenes), None)
 
     def notify_change(self, model_changer: IModelChanger):
-        pass
+        ...
