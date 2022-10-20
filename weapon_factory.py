@@ -15,8 +15,8 @@ class WeaponFactory(ABC):
     def create_weapon(self):
         pass
 
-    def upgrade_weapon(self, weapon: Weapon) -> str:
-        ...
+    def upgrade_weapon(self, weapon: Weapon):
+        weapon.upgrade()
 
 
 class Sword(Weapon):
