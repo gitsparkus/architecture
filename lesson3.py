@@ -21,11 +21,11 @@ from math import pi
 class Shape(ABC):
 
     @abstractmethod
-    def get_area(self):
+    def get_area(self) -> float:
         pass
 
     @abstractmethod
-    def get_perimeter(self):
+    def get_perimeter(self) -> float:
         pass
 
 
@@ -36,10 +36,10 @@ class ShapeList(list):
             raise ValueError('В список фигур можно добавлять только объекты классов, унаследованных от Shape')
         super().append(shape)
 
-    def get_sum_perimeter(self):
+    def get_sum_perimeter(self) -> float:
         return sum((shape.get_perimeter() for shape in self))
 
-    def get_sum_area(self):
+    def get_sum_area(self) -> float:
         return sum((shape.get_area() for shape in self))
 
 
@@ -48,18 +48,18 @@ class Triangle(Shape):
     def __init__(self, a: float, b: float, c: float):
 
         if a <= 0 or b <= 0 or c <= 0:
-            raise ValueError('Все стороны должны быть больше 0!')
+            raise ValueError('Все стороны фигуры должны быть больше 0!')
         if a + b <= c or a + c <= b or b + c <= a:
             raise ValueError('Из переданных отрезков невозможно собрать треугольник!')
         self.__a = a
         self.__b = b
         self.__c = c
 
-    def get_area(self):
+    def get_area(self) -> float:
         p = self.get_perimeter() / 2
         return (p * (p - self.__a) * (p - self.__b) * (p - self.__c)) ** 0.5
 
-    def get_perimeter(self):
+    def get_perimeter(self) -> float:
         return self.__a + self.__b + self.__c
 
 
@@ -70,10 +70,10 @@ class Circle(Shape):
             raise ValueError('Радиус должен быть больше 0!')
         self.__r = r
 
-    def get_area(self):
+    def get_area(self) -> float:
         return pi * (self.__r ** 2)
 
-    def get_perimeter(self):
+    def get_perimeter(self) -> float:
         return 2 * pi * self.__r
 
 
@@ -85,10 +85,10 @@ class Rectangle(Shape):
         self.__a = a
         self.__b = b
 
-    def get_area(self):
+    def get_area(self) -> float:
         return self.__a * self.__b
 
-    def get_perimeter(self):
+    def get_perimeter(self) -> float:
         return 2 * (self.__a + self.__b)
 
 
