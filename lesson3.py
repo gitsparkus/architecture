@@ -18,6 +18,16 @@ from abc import ABC, abstractmethod
 from math import pi
 
 
+class ArgumentTypeError(ValueError):
+    pass
+
+class ArgumentValueError(ValueError):
+    pass
+
+class GeometryError(ValueError):
+    pass
+
+
 class Shape(ABC):
 
     @abstractmethod
@@ -33,7 +43,7 @@ class ShapeList(list):
 
     def append(self, shape: Shape):
         if not isinstance(shape, Shape):
-            raise ValueError('В список фигур можно добавлять только объекты классов, унаследованных от Shape')
+            raise ArgumentTypeError('В список фигур можно добавлять только объекты классов, унаследованных от Shape')
         super().append(shape)
 
     def get_sum_perimeter(self) -> float:
@@ -48,9 +58,9 @@ class Triangle(Shape):
     def __init__(self, a: float, b: float, c: float):
 
         if a <= 0 or b <= 0 or c <= 0:
-            raise ValueError('Все стороны фигуры должны быть больше 0!')
+            raise ArgumentValueError('Все стороны фигуры должны быть больше 0!')
         if a + b <= c or a + c <= b or b + c <= a:
-            raise ValueError('Из переданных отрезков невозможно собрать треугольник!')
+            raise GeometryError('Из переданных отрезков невозможно собрать треугольник!')
         self.__a = a
         self.__b = b
         self.__c = c
@@ -67,7 +77,7 @@ class Circle(Shape):
 
     def __init__(self, r: float):
         if r <= 0:
-            raise ValueError('Радиус должен быть больше 0!')
+            raise ArgumentValueError('Радиус должен быть больше 0!')
         self.__r = r
 
     def get_area(self) -> float:
@@ -81,7 +91,7 @@ class Rectangle(Shape):
 
     def __init__(self, a: float, b: float):
         if a <= 0 or b <= 0:
-            raise ValueError('Сторона фигуры не может быть меньше 0!')
+            raise ArgumentValueError('Сторона фигуры не может быть меньше 0!')
         self.__a = a
         self.__b = b
 
