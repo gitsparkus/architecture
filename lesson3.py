@@ -15,14 +15,14 @@
 """
 
 from abc import ABC, abstractmethod
-from math import pi, tan, radians
-
-
-class ArgumentTypeError(ValueError):
-    pass
+from math import pi
 
 
 class ArgumentValueError(ValueError):
+    pass
+
+
+class ArgumentTypeError(ValueError):
     pass
 
 
@@ -41,10 +41,13 @@ class Shape(ABC):
         pass
 
 
-class Polygon(Shape):
+class Polygon(Shape, ABC):
 
     def __init__(self, *args: float):
-        self._sides = args
+        for side in args:
+            if side <= 0:
+                raise ArgumentValueError('Размер стороны многоугольника не может быть меньше, или равен 0!')
+        self._sides = (*args,)
 
     @abstractmethod
     def get_area(self) -> float:
@@ -83,10 +86,10 @@ class Square(Rectangle):
 
 class Circle(Shape):
 
-    def __init__(self, r: float):
-        if r <= 0:
+    def __init__(self, radius: float):
+        if radius <= 0:
             raise ArgumentValueError('Радиус должен быть больше 0!')
-        self.radius = r
+        self.radius = radius
 
     def get_area(self) -> float:
         return pi * (self.radius ** 2)
@@ -122,7 +125,5 @@ if __name__ == '__main__':
     shapes_list.append(rectangle)
     shapes_list.append(circle)
 
-    for item in shapes_list:
-        print(item.__class__)
-        print(item.get_area())
-
+    print(shapes_list.get_sum_area())
+    print(shapes_list.get_sum_perimeter())
