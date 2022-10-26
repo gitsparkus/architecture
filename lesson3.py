@@ -69,19 +69,25 @@ class Triangle(Polygon):
         return (p * (p - self._sides[0]) * (p - self._sides[1]) * (p - self._sides[2])) ** 0.5
 
 
-class Rectangle(Polygon):
+class IRectangle(Polygon, ABC):
 
-    def __init__(self, a: float, b: float):
-        super().__init__(a, b, a, b)
+    def __init__(self, a: float, b: float, c: float, d: float):
+        super().__init__(a, b, c, d)
 
     def get_area(self) -> float:
         return self._sides[0] * self._sides[1]
 
 
-class Square(Rectangle):
+class Rectangle(IRectangle):
+
+    def __init__(self, a: float, b: float):
+        super().__init__(a, b, a, b)
+
+
+class Square(IRectangle):
 
     def __init__(self, a: float):
-        super().__init__(a, a)
+        super().__init__(a, a, a, a)
 
 
 class Circle(Shape):
