@@ -1,0 +1,379 @@
+openapi: 3.0.0
+info:
+  title: Заказ на ресурсы облака
+  version: 0.0.1
+servers:
+- url: http://localhost:8080/api/v1/
+  description: DevSRV
+paths:
+  /orders:
+    get:
+      tags:
+      - Orders
+      summary: Метод получения списка заказов
+      operationId: get_all_orders
+      responses:
+        "200":
+          description: Успешный ответ со списком заказов
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Orders'
+        default:
+          description: Все остальное
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-openapi-router-controller: swagger_server.controllers.orders_controller
+    post:
+      tags:
+      - Orders
+      summary: Метод создания заказа
+      operationId: create_order
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Order'
+        required: true
+      responses:
+        "200":
+          description: Успешный ответ создания заказ на облако
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_404'
+        default:
+          description: Все остальное
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-openapi-router-controller: swagger_server.controllers.orders_controller
+  /orders/{order_id}:
+    get:
+      tags:
+      - Orders
+      summary: Метод получения заказа по ID
+      operationId: get_order_by_id
+      parameters:
+      - name: order_id
+        in: path
+        description: Идентификатор заказа
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+          example: "12"
+      responses:
+        "200":
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        default:
+          description: Все остальное
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-openapi-router-controller: swagger_server.controllers.orders_controller
+    delete:
+      tags:
+      - Orders
+      summary: Метод отмены заказа по ID
+      operationId: delete_order_by_id
+      parameters:
+      - name: order_id
+        in: path
+        description: Идентификатор заказа
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: string
+        example: 12
+      responses:
+        "200":
+          description: Успешное удаление
+          content:
+            application/json: {}
+        default:
+          description: Все остальное
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-openapi-router-controller: swagger_server.controllers.orders_controller
+  /references/platforms:
+    get:
+      tags:
+      - References
+      - Platforms
+      summary: Метод получения списка платформ
+      operationId: get_platform_list
+      responses:
+        "200":
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Platforms'
+        default:
+          description: Все остальное
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-openapi-router-controller: swagger_server.controllers.references_controller
+  /references/disctypes:
+    get:
+      tags:
+      - References
+      - DiskTypes
+      summary: Метод получения списка типов дисков
+      operationId: get_disk_types_list
+      responses:
+        "200":
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DiskTypes'
+        default:
+          description: Все остальное
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-openapi-router-controller: swagger_server.controllers.references_controller
+  /auth:
+    post:
+      tags:
+      - Auth
+      summary: Метод авторизации
+      operationId: post_auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        "200":
+          description: Успешная авторизация
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_200'
+        default:
+          description: Все остальное
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      x-openapi-router-controller: swagger_server.controllers.auth_controller
+components:
+  schemas:
+    Order:
+      required:
+      - client_id
+      - name
+      - platform_id
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 12
+        name:
+          type: string
+          example: Тестовый сервер
+        description:
+          type: string
+          example: Описание сервера
+        client_id:
+          type: integer
+          example: 3
+        platform_id:
+          type: integer
+          example: 4
+        public_ip_flag:
+          type: boolean
+          example: false
+        public_ip:
+          type: string
+          example: 86.86.86.86
+        CPU:
+          type: integer
+          example: 4
+        RAM:
+          type: integer
+          example: 128
+        status:
+          type: integer
+          example: 1
+        disks:
+          type: array
+          items:
+            $ref: '#/components/schemas/Disks'
+      example:
+        public_ip: 86.86.86.86
+        disks:
+        - - size: 32
+            type_id: 2
+            id: 2
+            order_id: 12
+          - size: 32
+            type_id: 2
+            id: 2
+            order_id: 12
+        - - size: 32
+            type_id: 2
+            id: 2
+            order_id: 12
+          - size: 32
+            type_id: 2
+            id: 2
+            order_id: 12
+        name: Тестовый сервер
+        platform_id: 4
+        description: Описание сервера
+        CPU: 4
+        public_ip_flag: false
+        id: 12
+        client_id: 3
+        RAM: 128
+        status: 1
+    Orders:
+      type: array
+      items:
+        $ref: '#/components/schemas/Order'
+    Platform:
+      required:
+      - name
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 2
+        name:
+          type: string
+          example: Intel
+      example:
+        name: Intel
+        id: 2
+    Platforms:
+      type: array
+      items:
+        $ref: '#/components/schemas/Platform'
+    DiskType:
+      required:
+      - name
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 2
+        name:
+          type: string
+          example: HDD
+      example:
+        name: HDD
+        id: 2
+    DiskTypes:
+      type: array
+      items:
+        $ref: '#/components/schemas/DiskType'
+    Disk:
+      required:
+      - order_id
+      - size
+      - type_id
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 2
+        order_id:
+          type: integer
+          example: 12
+        size:
+          type: integer
+          example: 32
+        type_id:
+          type: integer
+          example: 2
+      example:
+        size: 32
+        type_id: 2
+        id: 2
+        order_id: 12
+    Disks:
+      type: array
+      items:
+        $ref: '#/components/schemas/Disk'
+    Client:
+      required:
+      - fullname
+      - login
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 2
+        fullname:
+          type: string
+          example: Alex
+        login:
+          type: string
+          example: User1
+    Clients:
+      type: array
+      items:
+        $ref: '#/components/schemas/Client'
+    User:
+      required:
+      - login
+      - password
+      type: object
+      properties:
+        login:
+          type: string
+          example: User1
+        password:
+          type: string
+          example: qwerty
+    Error:
+      required:
+      - code
+      - message
+      type: object
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+    inline_response_404:
+      type: object
+      properties:
+        "404":
+          type: string
+          example: Not Found
+    inline_response_200:
+      type: object
+      properties:
+        token:
+          type: string
+          example: 402880824ff933a4014ff9345d7c0002
+      example:
+        token: 402880824ff933a4014ff9345d7c0002
+
