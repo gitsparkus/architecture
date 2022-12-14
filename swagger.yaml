@@ -1,0 +1,330 @@
+openapi: 3.0.0
+info:
+  title: Заказ на ресурсы облака
+  version: 0.0.1
+servers:
+  - url: http://localhost:8080/api/v1/
+    description: DevSRV
+paths:
+  /orders:
+    get:
+      summary: Метод получения списка заказов
+      tags:
+        - Orders
+      operationId: getAllOrders
+      responses:
+        "200":
+           description: Успешный ответ со списком заказов
+           content:
+             application/json:
+               schema:
+                 $ref: "#/components/schemas/Orders"
+        "default":
+           description: Все остальное
+           content:
+             application/json:
+               schema:
+                 $ref: "#/components/schemas/Error"
+    post:
+      summary: Метод создания заказа
+      tags:
+        - Orders
+      operationId: createOrder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Order"
+      responses:
+        "200":
+          description: Успешный ответ создания заказ на облако
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  404:
+                    type: string
+                    example: Not Found
+        "default":
+          description: Все остальное
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /orders/{order_id}:
+    get:
+      summary: Метод получения заказа по ID
+      tags:
+        - Orders
+      operationId: getOrderById
+      parameters:
+        - name: order_id
+          in: path
+          required: true
+          description: Идентификатор заказа
+          schema:
+            type: string
+            example: 12
+      responses:
+        "200":
+           description: Успешный ответ
+           content:
+             application/json:
+               schema:
+                 $ref: "#/components/schemas/Order"
+        "default":
+           description: Все остальное
+           content:
+             application/json:
+               schema:
+                 $ref: "#/components/schemas/Error"
+    delete:
+      summary: Метод отмены заказа по ID
+      tags:
+        - Orders
+      operationId: deleteOrderById
+      parameters:
+       - name: order_id
+         in: path
+         required: true
+         description: Идентификатор заказа
+         schema:
+           type: string
+         example: 12
+      responses:
+        "200":
+           description: Успешное удаление
+           content:
+             application/json: {}
+        "default":
+           description: Все остальное
+           content:
+             application/json:
+               schema:
+                 $ref: "#/components/schemas/Error"
+  /references/platforms:
+    get:
+      summary: Метод получения списка платформ
+      tags:
+        - References
+        - Platforms
+      operationId: getPlatformList
+      responses:
+        "200":
+           description: Успешный ответ
+           content:
+             application/json:
+               schema:
+                 $ref: "#/components/schemas/Platforms"
+        "default":
+           description: Все остальное
+           content:
+             application/json:
+               schema:
+                 $ref: "#/components/schemas/Error"
+  /references/disctypes:
+    get:
+      summary: Метод получения списка типов дисков
+      tags:
+        - References
+        - DiskTypes
+      operationId: getDiskTypesList
+      responses:
+        "200":
+           description: Успешный ответ
+           content:
+             application/json:
+               schema:
+                 $ref: "#/components/schemas/DiskTypes"
+        "default":
+           description: Все остальное
+           content:
+             application/json:
+               schema:
+                 $ref: "#/components/schemas/Error"
+  /auth:
+    post:
+      summary: Метод авторизации
+      tags:
+        - Auth
+      operationId: postAuth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "200":
+           description: Успешная авторизация
+           content:
+             application/json:
+               schema:
+                 type: object
+                 properties:
+                   token:
+                     type: string
+                     example: 402880824ff933a4014ff9345d7c0002
+
+
+        "default":
+           description: Все остальное
+           content:
+             application/json:
+               schema:
+                 $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    Order:
+      type: object
+      required:
+        - client_id
+        - name
+        - platform_id
+      properties:
+        id:
+          type: integer
+          example: 12
+        name:
+          type: string
+          example: Тестовый сервер
+        description:
+          type: string
+          example: Описание сервера
+        client_id:
+          type: integer
+          example: 3
+        platform_id:
+          type: integer
+          example: 4
+        public_ip_flag:
+          type: boolean
+          example: false
+        public_ip:
+          type: string
+          example: 86.86.86.86
+        CPU:
+          type: integer
+          example: 4
+        RAM:
+          type: integer
+          example: 128
+        status:
+          type: integer
+          example: 1
+        disks:
+          type: array
+          items:
+              $ref: "#/components/schemas/Disks"
+
+    Orders:
+      type: array
+      items:
+        $ref: "#/components/schemas/Order"
+    Platform:
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: integer
+          example: 2
+        name:
+          type: string
+          example: Intel
+    Platforms:
+      type: array
+      items:
+        $ref: "#/components/schemas/Platform"
+    DiskType:
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: integer
+          example: 2
+        name:
+          type: string
+          example: HDD
+    DiskTypes:
+      type: array
+      items:
+        $ref: "#/components/schemas/DiskType"
+
+    Disk:
+      type: object
+      required:
+        - type_id
+        - order_id
+        - size
+      properties:
+        id:
+          type: integer
+          example: 2
+        order_id:
+          type: integer
+          example: 12
+        size:
+          type: integer
+          example: 32
+        type_id:
+          type: integer
+          example: 2
+    Disks:
+      type: array
+      items:
+        $ref: "#/components/schemas/Disk"
+
+    Client:
+      type: object
+      required:
+        - fullname
+        - login
+      properties:
+        id:
+          type: integer
+          example: 2
+        fullname:
+          type: string
+          example: Alex
+        login:
+          type: string
+          example: User1
+    Clients:
+      type: array
+      items:
+        $ref: "#/components/schemas/Client"
+
+    User:
+      type: object
+      required:
+        - login
+        - password
+      properties:
+        login:
+          type: string
+          example: User1
+        password:
+          type: string
+          example: qwerty
+
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
