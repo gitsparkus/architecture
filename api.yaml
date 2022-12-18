@@ -1,0 +1,399 @@
+openapi: 3.0.0
+info:
+  title: Управление роботом-пылесосом
+  version: 0.0.1
+servers:
+  - url: http://localhost:8080/api/v1/
+    description: DevSRV
+paths:
+  /cleaner/{cleaner_id}:
+    get:
+      summary: Метод получения состояния пылесоса
+      tags:
+        - Cleaner
+      operationId: getCleaner
+      parameters:
+        - name: cleaner_id
+          in: path
+          required: true
+          description: Идентификатор пылесоса
+          schema:
+            type: integer
+            example: 1
+      responses:
+        "200":
+           description: Успешный ответ с состоянием пылесоса
+           content:
+             application/json:
+               schema:
+                 $ref: "#/components/schemas/Cleaner"
+        "default":
+           description: Все остальное
+           content:
+             application/json:
+               schema:
+                 $ref: "#/components/schemas/Error"
+  /cleaner::
+    post:
+      summary: Метод добавления пылесоса
+      tags:
+        - Cleaner
+      operationId: createCleaner
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: Валера
+                  model:
+                    type: string
+                    example: 1S
+                  mac:
+                    type: string
+                    example: 00:26:57:00:1f:02
+      responses:
+        "200":
+          description: Успешный ответ добавления пылесоса
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Cleaner"
+        "404":
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  404:
+                    type: string
+                    example: Not Found
+        "default":
+          description: Все остальное
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /schedule:
+    get:
+      summary: Метод получения расписаний
+      tags:
+        - Schedule
+      operationId: getSchedules
+      responses:
+        "200":
+           description: Успешный ответ
+           content:
+             application/json:
+               schema:
+                 $ref: "#/components/schemas/Schedules"
+        "default":
+           description: Все остальное
+           content:
+             application/json:
+               schema:
+                 $ref: "#/components/schemas/Error"
+
+    post:
+      summary: Метод добавления расписания
+      tags:
+        - Schedule
+      operationId: createSchedule
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                $ref: "#/components/schemas/Schedules"
+      responses:
+        "200":
+          description: Успешный ответ добавления расписания
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Schedules"
+
+        "default":
+          description: Все остальное
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+    put:
+      summary: Метод включения/выключения расписания
+      tags:
+        - Schedule
+      operationId: switchSchedule
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 7
+
+      responses:
+        "200":
+          description: Успешный ответ добавления расписания
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Schedules"
+
+        "default":
+          description: Все остальное
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /schedule/{schedule_id}:
+    get:
+      summary: Метод получения расписания по ID
+      tags:
+        - Schedule
+      operationId: getScheduleById
+      parameters:
+        - name: schedule_id
+          in: path
+          required: true
+          description: Идентификатор расписания
+          schema:
+            type: integer
+            example: 12
+      responses:
+        "200":
+           description: Успешный ответ
+           content:
+             application/json:
+               schema:
+                 $ref: "#/components/schemas/Schedule"
+        "default":
+           description: Все остальное
+           content:
+             application/json:
+               schema:
+                 $ref: "#/components/schemas/Error"
+  /rooms:
+    get:
+      summary: Метод получения комнат
+      tags:
+        - Rooms
+      operationId: getRooms
+      responses:
+        "200":
+           description: Успешный ответ
+           content:
+             application/json:
+               schema:
+                 $ref: "#/components/schemas/Rooms"
+        "default":
+           description: Все остальное
+           content:
+             application/json:
+               schema:
+                 $ref: "#/components/schemas/Error"
+    post:
+      summary: Метод добавления комнаты
+      tags:
+        - Rooms
+      operationId: createRoom
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                $ref: "#/components/schemas/Room"
+      responses:
+        "200":
+          description: Успешный ответ добавления комнаты
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Schedules"
+
+        "default":
+          description: Все остальное
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /rooms/{room_id}:
+    delete:
+      summary: Метод удаления комнаты по id
+      tags:
+        - Rooms
+      operationId: deleteRoomsById
+      parameters:
+       - name: room_id
+         in: path
+         required: true
+         description: Идентификатор комнаты
+         schema:
+           type: integer
+         example: 7
+      responses:
+        "200":
+           description: Успешное удаление
+           content:
+             application/json: {}
+        "default":
+           description: Все остальное
+           content:
+             application/json:
+               schema:
+                 $ref: "#/components/schemas/Error"
+  /history:
+    get:
+      summary: Метод получения истории
+      tags:
+        - History
+      operationId: getHistory
+      responses:
+        "200":
+           description: Успешный ответ
+           content:
+             application/json:
+               schema:
+                 $ref: "#/components/schemas/History"
+        "default":
+           description: Все остальное
+           content:
+             application/json:
+               schema:
+                 $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    Cleaner:
+      type: object
+      required:
+        - model
+        - name
+      properties:
+        id:
+          type: integer
+          example: 12
+        name:
+          type: string
+          example: Робот-пылесос
+        model:
+          type: string
+          example: 1S
+        battery:
+          type: integer
+          example: 70
+        filter:
+          type: integer
+          example: 100
+        sideBrush:
+          type: integer
+          example: 9
+        mainBrush:
+          type: integer
+          example: 50
+        Sensors:
+          type: integer
+          example: 80
+    Room:
+      type: object
+      required:
+        - name
+        - coordinates
+      properties:
+        id:
+          type: integer
+          example: 12
+        name:
+          type: string
+          example: Коридор
+        coordinates:
+          type: string
+          example: [12,17,150,90]
+    Rooms:
+      type: array
+      items:
+        $ref: "#/components/schemas/Room"
+    HistoryRecord:
+      type: object
+      required:
+       - date
+       - time
+       - status
+      properties:
+        date:
+          type: string
+          example: 2022-12-12
+        time:
+          type: string
+          example: 16:14:00
+        status:
+          type: string
+          enum:
+            - done
+            - stopped
+            - error
+        cleanTime:
+          type: string
+          example: 00:14:00
+        cleanArea:
+          type: integer
+          example: 15
+    History:
+      type: array
+      items:
+        $ref: "#/components/schemas/HistoryRecord"
+    Schedule:
+      type: object
+      required:
+        - time
+        - repit
+      properties:
+        id:
+          type: integer
+          example: 7
+        time:
+          type: string
+          example: 22:12
+        repit:
+          type: string
+          enum:
+            - once
+            - dayly
+            - weakly
+            - monthly
+          example: dayly
+        mode:
+          type: string
+          enum:
+            - silent
+            - standard
+            - turbo
+          example: turbo
+        enabled:
+          type: boolean
+          example: true
+        rooms:
+          type: array
+          items:
+            $ref: "#/components/schemas/Room"
+    Schedules:
+      type: array
+      items:
+        $ref: "#/components/schemas/Schedule"
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
